@@ -1,30 +1,21 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="format-detection" content="telephone=no">
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<title>Медицинские калькуляторы</title>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="format-detection" content="telephone=no"><title>Медицинские калькуляторы</title><script src="https://telegram.org/js/telegram-web-app.js"></script><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <style>
 :root{
-  color-scheme:light dark;
+  color-scheme:light;
   --bg:#ffffff;--card:#f5f4f0;--card2:#e4e2da;--text:#1c1c1a;--text2:#5a5954;--muted:#8a8882;--border:#d9d7cf;
   --accent:#2a78d6;--ok:#0b7a0b;--warn:#a65d00;--bad:#b3261e;--band:#0ca30c;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){--bg:#1a1a19;--card:#262624;--card2:#3a3a37;--text:#f0efec;--text2:#c3c2b7;--muted:#898781;--border:#3a3a37;
-  --accent:#3987e5;--ok:#5fcf5f;--warn:#f0a53a;--bad:#ff8a80}
+  --accent:#3987e5;--ok:#5fcf5f;--warn:#f0a53a;--bad:#ff8a80;color-scheme:dark}
 }
-:root[data-theme="dark"]{color-scheme:dark;--bg:#1a1a19;--card:#262624;--card2:#3a3a37;--text:#f0efec;--text2:#c3c2b7;--muted:#898781;--border:#3a3a37;
-  --accent:#3987e5;--ok:#5fcf5f;--warn:#f0a53a;--bad:#ff8a80}
-:root[data-theme="light"]{color-scheme:light}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+:root[data-theme="dark"]{--bg:#1a1a19;--card:#262624;--card2:#3a3a37;--text:#f0efec;--text2:#c3c2b7;--muted:#898781;--border:#3a3a37;
+  --accent:#3987e5;--ok:#5fcf5f;--warn:#f0a53a;--bad:#ff8a80;color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
-.wrap{max-width:780px;margin:0 auto;padding:24px 16px 40px}
-h1{font-size:22px;font-weight:500;margin:0 0 4px}
+.wrap{max-width:780px;margin:0 auto;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:22px;font-weight:500;margin:0 0 4px;text-wrap:balance}
 .lead{font-size:14px;color:var(--text2);margin:0 0 18px}
 
 /* home */
@@ -121,16 +112,81 @@ input[type=range]{accent-color:var(--accent);width:100%;margin:0}
 .stsub{font-size:12px;color:var(--text2);margin:0 0 16px;line-height:1.5}
 
 /* inotropes */
-.numin{width:70px;font:inherit;font-size:16px;padding:3px 6px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);text-align:right}
+.numin{width:68px;font:inherit;font-size:13px;padding:3px 6px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);text-align:right}
 .numin:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .sl .v .numin{margin-right:4px}
 .hero.dr{border-left:6px solid var(--dc)}
 .hero .sm{font-size:13px;color:var(--text2);line-height:1.6;margin-top:6px}
 .hero .sm b{color:var(--text);font-weight:500}
 .sig{margin-top:32px;font-size:11px;line-height:1.5;color:var(--muted);opacity:.22;user-select:none}
-</style>
-</head>
-<body>
+
+/* PE risk wizard */
+.pe-prog{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:16px 0 12px}
+.pe-prog button{min-width:0;hyphens:manual;overflow-wrap:anywhere;font:inherit;font-size:12px;line-height:1.25;padding:6px 4px;border:1px solid var(--border);border-radius:8px;background:none;color:var(--text2);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center}
+.pe-prog button .k{width:20px;height:20px;border-radius:50%;background:var(--card2);color:var(--text2);font-size:12px;line-height:20px}
+.pe-prog button.done .k{background:var(--accent);color:#fff}
+.pe-prog button[aria-current=step]{border-color:var(--accent);color:var(--text);background:var(--card)}
+.pe-prog button.skip{opacity:.45}
+.pe-prog button:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ck{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--border);cursor:pointer;font-size:14px}
+.ck:first-child{border-top:0;padding-top:2px}
+.ck input{accent-color:var(--accent);width:18px;height:18px;margin:2px 0 0;flex:none}
+.ck .tx{flex:1;min-width:0}
+.ck .hint,.opt .hint{display:block;font-size:12px;color:var(--text2);line-height:1.45;margin-top:2px}
+.ck .pt{flex:none;font-size:13px;font-weight:500;color:var(--text2);font-variant-numeric:tabular-nums}
+.ck.off{opacity:.45;pointer-events:none}
+.opt{padding:4px 0 10px;border-bottom:1px solid var(--border);margin:0 0 4px}
+.opt .ol{font-size:14px;margin:0 0 6px}
+.opt .seg{flex-wrap:wrap}
+.opt.off{opacity:.45;pointer-events:none}
+.pe-nav{display:flex;justify-content:space-between;gap:12px;margin:4px 0 12px}
+.btn{font:inherit;font-size:14px;padding:8px 18px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--text);cursor:pointer}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn[hidden]{display:none}
+.pe-info{font-size:13px;color:var(--text2);margin:0 0 10px}
+.pe-info b{color:var(--text);font-weight:500}
+.pe-cat{font-family:Georgia,"Times New Roman",serif;font-size:32px;line-height:1.15;font-weight:500;margin:2px 0 4px;text-wrap:balance}
+.rs{display:flex;gap:4px;align-items:flex-start;margin:14px 0 4px}
+.rs .c{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:8px;transition:flex-grow .25s ease}
+.rs .c[aria-current=true]{flex-grow:2.3}
+.rs .bar{height:96px;background:var(--rc);opacity:.28;clip-path:polygon(0 var(--a),100% var(--b),100% 100%,0 100%)}
+.rs .c:first-child .bar{border-radius:6px 0 0 6px}
+.rs .c:last-child .bar{border-radius:0 6px 6px 0}
+.rs .c[aria-current=true] .bar{opacity:1}
+.rs .lb{font-size:10.5px;line-height:1.25;color:var(--muted);hyphens:manual}
+.rs .c[aria-current=true] .lb{font-size:14.5px;letter-spacing:-.01em;line-height:1.2;font-weight:600;color:var(--text)}
+@media (min-width:560px){.rs .c[aria-current=true] .lb{font-size:19px}.rs .lb{font-size:12px}}
+@media (prefers-reduced-motion:reduce){.rs .c{transition:none}}
+.hd{display:grid;gap:8px}
+.hdb{display:flex;flex-direction:column;gap:3px;text-align:left;font:inherit;font-size:15px;font-weight:500;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer}
+.hdb .hint{font-size:12px;font-weight:400;color:var(--text2);line-height:1.45}
+.hdb:hover{border-color:var(--accent)}
+.hdb[aria-pressed=true]{border-color:var(--accent);background:var(--card2)}
+.hdb.sh[aria-pressed=true]{border-color:var(--bad)}
+.hdb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rx h4{font-size:14px;font-weight:500;margin:12px 0 4px}
+.rx ol{margin:0;padding-left:20px}
+.rx ol li{margin:0 0 5px}
+.rx .alert{margin:10px 0 0;padding:8px 10px;border-radius:6px;background:var(--card2);color:var(--bad);font-weight:500;font-size:13px}
+.rx{background:var(--card);border-radius:8px;padding:12px 16px;margin:0 0 12px;font-size:14px;line-height:1.55}
+.rx h3{font-size:15px;font-weight:500;margin:0 0 6px}
+.rx ul{margin:0;padding-left:18px}
+.rx li{margin:0 0 5px}
+.rx li:last-child{margin:0}
+.rx b{font-weight:500}
+.rx .dz{color:var(--text2);font-size:13px}
+.rx details{margin-top:8px;font-size:13px;color:var(--text2)}
+.rx summary{cursor:pointer;color:var(--accent)}
+.rx details p{margin:6px 0 0}
+
+/* SOFA + iPhone */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.numin{width:70px;font-size:16px}
+.sfm{display:flex;gap:3px;margin:8px 0 6px}
+.sfm i{flex:1;height:8px;border-radius:3px;background:var(--card2)}
+.sfn{font-size:12px;color:var(--text2);margin:6px 0 0;line-height:1.5}
+.sfn b{color:var(--text);font-weight:500}
+</style></head><body>
 <main class="wrap">
 
 <!-- HOME -->
@@ -158,9 +214,19 @@ input[type=range]{accent-color:var(--accent);width:100%;margin:0}
       <span class="d">Сколько мл адреналина, мезатона, норадреналина, допамина и добутамина набрать в шприц 50 мл по весу пациента.</span>
       <span class="go">Открыть →</span>
     </a>
+    <a class="mi" href="#pe" style="--c:#d03b3b">
+      <span class="t">Риск ранней смерти при ТЭЛА</span>
+      <span class="d">Классификация пациентов с острой ЛЭ на основании риска ранней смерти. Тактика ведения.</span>
+      <span class="go">Открыть →</span>
+    </a>
+    <a class="mi" href="#sofa" style="--c:#6a5acd">
+      <span class="t">Шкала SOFA</span>
+      <span class="d">Органная дисфункция по шести системам, итоговый балл и ориентир по смертности.</span>
+      <span class="go">Открыть →</span>
+    </a>
   </div>
   <p class="note">Учебные расчёты, не заменяют клинические решения.</p>
-  <div class="sig" aria-hidden="true">© @AlekseyKa78</div>
+  <div class="sig" aria-hidden="true">© @AlekseyKa78<br>© @Vysota_i_pulse</div>
 </section>
 
 <!-- BMI -->
@@ -260,6 +326,104 @@ input[type=range]{accent-color:var(--accent);width:100%;margin:0}
   <div class="eq" id="i_eq"></div>
   <div class="heroes" id="i_heroes"></div>
   <p class="note">Расчёт по номограмме для шприца 50 мл: при скорости 1 мл/ч доза равна 1 мкг/кг/мин (добутамин, допамин), 0,1 мкг/кг/мин (норадреналин, мезатон) или 0,01 мкг/кг/мин (адреналин). Концентрации: адреналин 0,1%, мезатон 1%, норадреналин 0,2%, допамин и добутамин 4%. Добутамин 1,25% (12,5 мг/мл) пересчитан относительно 4% (40 мг/мл) в 3,2 раза. Приготовление первичного 4% раствора добутамина: 250 мг сухого вещества (1 флакон) развести в 6,25 мл физраствора или 5% глюкозы. Терапевтические диапазоны по таблице (Марино, Хенсли). Калькулятор рассчитан на вес 20–150 кг; вне этого диапазона расчёт выполняется по той же формуле, но возможна большая погрешность (у малых весов из-за округления объёмов в таблице). Растворитель выбирайте по инструкции к препарату. Учебный инструмент: перед введением сверяйте расчёт с протоколом отделения и проводите двойную проверку.</p>
+</section>
+
+<!-- PE RISK -->
+<section id="pe" data-view data-title="Риск ранней смерти при ТЭЛА" hidden>
+  <a class="back" href="#">← Все калькуляторы</a>
+  <h1>Риск ранней смерти при острой ТЭЛА</h1>
+  <p class="lead">Ответьте на вопросы по шагам: категория риска и тактика лечения появятся на последнем шаге. Вернуться к любому шагу можно по номеру вверху.</p>
+  <div class="pe-prog" id="p_prog" role="list"></div>
+
+  <div class="pe-step" id="p_s0">
+    <div class="grp">
+      <div class="gt">Шаг 1. Артериальное давление и гемодинамика</div>
+      <div id="p_shk"></div>
+    </div>
+    <div class="pe-info" id="p_i0"></div>
+  </div>
+
+  <div class="pe-step" id="p_s1" hidden>
+    <div class="grp">
+      <div class="gt">Шаг 2. Шкала PESI: пациент</div>
+      <div id="p_pt"></div>
+    </div>
+    <div class="grp">
+      <div class="gt">Сопутствующие заболевания и клинические признаки</div>
+      <div id="p_pesi"></div>
+    </div>
+    <div class="cards" id="p_sc"></div>
+  </div>
+
+  <div class="pe-step" id="p_s2" hidden>
+    <div class="grp">
+      <div class="gt">Шаг 3. Признаки дисфункции ПЖ при визуализации (ЭхоКГ или КТ-ангиография)</div>
+      <div id="p_img"></div>
+    </div>
+    <div class="pe-info" id="p_i2"></div>
+  </div>
+
+  <div class="pe-step" id="p_s3" hidden>
+    <div class="grp">
+      <div class="gt">Шаг 4. Сердечный биомаркер: тропонин</div>
+      <div id="p_bio"></div>
+    </div>
+    <div class="pe-info" id="p_i3"></div>
+  </div>
+
+  <div class="pe-step" id="p_s4" hidden>
+    <div class="hero dr" id="p_hero">
+      <div class="nm">Категория риска ранней (30-дневной) смерти</div>
+      <div class="rs" id="p_rs" role="list"></div>
+      <div class="sm" id="p_why"></div>
+    </div>
+    <div class="eq" id="p_eq"></div>
+    <div class="grp" id="p_wbox" hidden></div>
+    <div class="sub" id="p_rxh"></div>
+    <div id="p_rx"></div>
+  </div>
+
+  <div class="pe-nav">
+    <button type="button" class="btn" id="p_back">← Назад</button>
+    <button type="button" class="btn pri" id="p_next">Далее →</button>
+  </div>
+
+  <p class="note">Классификация по таблице «Классификация пациентов с острой ЛЭ на основании риска ранней смерти» (КР Минздрава РФ «Легочная эмболия», 2024; ESC 2019). PESI класса III–V и sPESI ≥1 указывают на повышенный риск 30-дневной смерти. Пациенты с PESI I–II или sPESI 0, но с признаками дисфункции ПЖ или повышенным тропонином, относятся к промежуточно-низкому риску. Пациенты с шоком или гипотензией не нуждаются в подсчёте PESI и оценке тропонина для отнесения к высокому риску. Дозы рассчитаны на вес, указанный на шаге 2, для взрослых без тяжёлой почечной недостаточности. Учебный инструмент: перед назначением сверяйте с действующими клиническими рекомендациями, инструкциями к препаратам и противопоказаниями.</p>
+</section>
+
+<!-- SOFA -->
+<section id="sofa" data-view data-title="Шкала SOFA" hidden>
+  <a class="back" href="#">← Все калькуляторы</a>
+  <h1>Шкала SOFA: органная дисфункция</h1>
+  <p class="lead">Двигайте ползунки: баллы по шести системам и итоговый SOFA пересчитываются сразу. Берите худшие значения за сутки.</p>
+  <div class="cols" style="margin-top:0">
+    <div>
+      <div class="grp"><div class="gt">Дыхание</div><div id="s_g1"></div><div class="sfn" id="s_pfn"></div><div id="s_ck" style="margin-top:8px"></div></div>
+      <div class="grp"><div class="gt">Свёртывание и печень</div><div id="s_g2"></div></div>
+      <div class="grp"><div class="gt">Нервная система: шкала комы Глазго (для взрослых)</div><div id="s_g3"></div><div class="sfn" id="s_gn"></div></div>
+    </div>
+    <div>
+      <div class="grp"><div class="gt">Кровообращение (дозы в мкг/кг/мин)</div><div id="s_g4"></div></div>
+      <div class="grp"><div class="gt">Почки</div><div id="s_g5"></div></div>
+    </div>
+  </div>
+
+  <div class="hero dr" id="s_hero" style="--dc:var(--ok)">
+    <div class="nm">Итоговый балл SOFA</div>
+    <div class="top"><span class="big" id="s_tot">0</span><span class="un">из 24</span></div>
+    <div class="st" id="s_st"></div>
+    <div class="trk segs" id="s_trk"><div class="mk" id="s_mk"></div></div>
+    <div class="ticks">
+      <span style="left:0;transform:none">0</span><span style="left:8.33%">2</span><span style="left:16.67%">4</span><span style="left:25%">6</span><span style="left:33.33%">8</span><span style="left:41.67%">10</span><span style="left:50%">12</span><span style="left:62.5%">15</span><span style="left:100%;transform:translateX(-100%)">24</span>
+    </div>
+    <div class="sm" id="s_mort"></div>
+    <div class="sm">SOFA ≥2 при подозрении на инфекцию: критерий органной дисфункции при сепсисе (Sepsis-3); оценивается как острое изменение от исходного уровня.</div>
+  </div>
+
+  <div class="sub">Баллы по системам</div>
+  <div class="cards" id="s_cards"></div>
+  <div class="eq" id="s_eq"></div>
+  <p class="note">Учебный расчёт, не заменяет клиническое решение. Критерии: Vincent et al., 1996 (SOFA), Sepsis-3 (2016). Для баллов используют худшее значение за сутки. Баллы 3 и 4 по дыханию ставятся только при респираторной поддержке. Шкала комы Глазго дана для взрослых; у детей используют адаптированные варианты. У седированных и интубированных пациентов обычно берут оценку до седации. Дозы катехоламинов указаны в мкг/кг/мин и учитываются при введении не менее часа. Диурез влияет на оценку почек, только если он ниже 500 или 200 мл в сутки. Смертность взята из когорты ОРИТ (Ferreira et al., 2001: при первой оценке и при максимальном SOFA) и в современной практике может отличаться.</p>
 </section>
 
 </main>
@@ -604,6 +768,421 @@ function listen(P,list,fn){list.forEach(function(s){byId(P+s.id).oninput=fn})}
   calc(70);
 })();
 
+/* ---------- PE RISK (ТЭЛА) ---------- */
+(function(){
+  var P='p_';function $(i){return byId(P+i)}
+  var S={hd:'na',age:65,male:1,w:70,rv:'na',mc:0,dd:0,noimg:0,trop:'na'};
+  var step=0;
+  var NAMES=['АД','PESI','ЭхоКГ / КТ','Тропонин','Итог'];
+
+  var SHOCK_HINT='В том числе остановка кровообращения, СЛР. Обструктивный шок: САД &lt;90 мм рт. ст. или вазопрессоры для поддержания САД ≥90 мм рт. ст. при адекватной волемии, плюс гипоперфузия (нарушение сознания, холодная влажная кожа, олигурия или анурия, повышение лактата). Персистирующая гипотензия: САД &lt;90 мм рт. ст. или снижение САД на ≥40 мм рт. ст. дольше 15 мин, не связанное с аритмией, гиповолемией или сепсисом.';
+  var PI=[
+    {k:'ca',n:'Онкологическое заболевание',h:'активное или в анамнезе',p:30},
+    {k:'chf',n:'Хроническая сердечная недостаточность',p:10},
+    {k:'cld',n:'Хроническое заболевание лёгких',p:10},
+    {k:'hr',n:'ЧСС ≥110 уд/мин',p:20},
+    {k:'sbp',n:'САД &lt;100 мм рт. ст.',p:30},
+    {k:'rr',n:'ЧДД ≥30 в мин',p:20},
+    {k:'tt',n:'Температура тела &lt;36 °C',p:20},
+    {k:'ms',n:'Нарушение сознания',h:'дезориентация, оглушение, сопор, кома',p:60},
+    {k:'sat',n:'SpO₂ &lt;90%',h:'с кислородом или без',p:20}
+  ];
+  var IM=[
+    {k:'mc',n:'Синдром Мак-Коннелла',h:'Снижение сократимости ПЖ + гипокинезия свободной стенки ПЖ при сохранении нормального сокращения верхушки.'},
+    {k:'dd',n:'D-образная деформация ЛЖ',h:'Уплощение межжелудочковой перегородки в парастернальной позиции по короткой оси из-за перегрузки ПЖ давлением; ЛЖ на срезе принимает форму буквы D.'}
+  ];
+  PI.forEach(function(p){S[p.k]=0});
+
+  function ck(box,items){
+    items.forEach(function(it){
+      var l=document.createElement('label');l.className='ck';l.id=P+'l_'+it.k;
+      l.innerHTML='<input type="checkbox" id="'+P+it.k+'"><span class="tx">'+it.n+(it.h?'<span class="hint">'+it.h+'</span>':'')+'</span>'+(it.p!==undefined?'<span class="pt">+'+it.p+'</span>':'');
+      box.appendChild(l);
+      $(it.k).onchange=function(){S[it.k]=this.checked?1:0;update()};
+    });
+  }
+  function seg(box,key,label,opts,hint){
+    var d=document.createElement('div');d.className='opt';d.id=P+'o_'+key;
+    d.innerHTML='<div class="ol">'+label+'</div><div class="seg" role="group" aria-label="'+label.replace(/<[^>]+>/g,'')+'">'+
+      opts.map(function(o){return '<button type="button" data-v="'+o[0]+'" aria-pressed="'+(S[key]===o[0])+'">'+o[1]+'</button>'}).join('')+
+      '</div>'+(hint?'<span class="hint">'+hint+'</span>':'');
+    box.appendChild(d);
+    var bs=d.querySelectorAll('button');
+    bs.forEach(function(b){b.onclick=function(){
+      S[key]=b.dataset.v;bs.forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});update();
+    }});
+  }
+  function numSlider(box,key,label,min,max,unit){
+    var r=document.createElement('div');r.className='sl';
+    r.innerHTML='<label for="'+P+key+'">'+label+'</label><input type="range" id="'+P+key+'" min="'+min+'" max="'+max+'" step="1" value="'+S[key]+'"><span class="v"><input type="number" class="numin" id="'+P+key+'n" min="'+min+'" max="'+max+'" step="1" value="'+S[key]+'" inputmode="numeric" aria-label="'+label+'"> '+unit+'</span>';
+    box.appendChild(r);
+    var sl=$(key),n=$(key+'n');
+    sl.oninput=function(){n.value=sl.value;S[key]=+sl.value;update()};
+    n.oninput=function(){var x=parseFloat(String(n.value).replace(',','.'));if(!isFinite(x)||x<=0)return;S[key]=x;sl.value=Math.min(Math.max(x,min),max);update()};
+  }
+
+  /* build steps */
+  $('shk').innerHTML='<div class="hd" role="group" aria-label="Гемодинамика">'+
+    '<button type="button" class="hdb" data-v="st" aria-pressed="false">Гемодинамика стабильная</button>'+
+    '<button type="button" class="hdb sh" data-v="sh" aria-pressed="false">Признаки шока<span class="hint">'+SHOCK_HINT+'</span></button></div>';
+  $('shk').querySelectorAll('.hdb').forEach(function(b){b.onclick=function(){
+    S.hd=b.dataset.v;
+    $('shk').querySelectorAll('.hdb').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});
+    go(S.hd==='sh'?4:1);
+  }});
+  numSlider($('pt'),'age','Возраст',18,100,'лет');
+  (function(){
+    var r=document.createElement('div');r.className='sl';
+    r.innerHTML='<label>Пол</label><div class="seg" role="group" aria-label="Пол"><button type="button" id="p_sM" aria-pressed="true">Мужской +10</button><button type="button" id="p_sF" aria-pressed="false">Женский</button></div>';
+    $('pt').appendChild(r);
+    $('sM').onclick=function(){S.male=1;$('sM').setAttribute('aria-pressed','true');$('sF').setAttribute('aria-pressed','false');update()};
+    $('sF').onclick=function(){S.male=0;$('sF').setAttribute('aria-pressed','true');$('sM').setAttribute('aria-pressed','false');update()};
+  })();
+  numSlider($('pt'),'w','Вес',30,200,'кг');
+  (function(){
+    var r=document.createElement('div');r.className='sl';
+    r.innerHTML='<label for="p_w2">Вес пациента</label><input type="range" id="p_w2" min="30" max="200" step="1" value="'+S.w+'"><span class="v"><input type="number" class="numin" id="p_w2n" min="30" max="200" step="1" value="'+S.w+'" inputmode="numeric" aria-label="Вес пациента"> кг</span>';
+    $('wbox').appendChild(r);
+    function setW(x){S.w=x;$('w').value=Math.min(Math.max(x,30),200);$('wn').value=x;update()}
+    $('w2').oninput=function(){$('w2n').value=this.value;setW(+this.value)};
+    $('w2n').oninput=function(){var x=parseFloat(String(this.value).replace(',','.'));if(!isFinite(x)||x<=0)return;$('w2').value=Math.min(Math.max(x,30),200);setW(x)};
+  })();
+  ck($('pesi'),PI);
+  $('sc').innerHTML=
+    '<div class="card"><div class="nm">Сумма PESI</div><div class="vl" id="p_pv">—</div><div class="u">баллов (возраст в годах + признаки)</div></div>'+
+    '<div class="card"><div class="nm">Класс PESI</div><div class="vl" id="p_pc">—</div><div class="u" id="p_pm"></div><div class="s" id="p_ps"></div></div>'+
+    '<div class="card"><div class="nm">sPESI</div><div class="vl" id="p_sv">—</div><div class="u" id="p_sm"></div><div class="s" id="p_ss"></div></div>';
+
+  var imgBox=$('img');
+  ck(imgBox,[{k:'noimg',n:'ЭхоКГ и КТ-ангиография не выполнялись',h:'признаки дисфункции ПЖ будут считаться не оценёнными'}]);
+  seg(imgBox,'rv','Отношение ПЖ/ЛЖ',[['lt','&lt;1,0'],['ge','≥1,0'],['na','Не измеряли']],'Конечно-диастолические диаметры, апикальная 4-камерная позиция (ЭхоКГ) или КТ-ангиография; в части исследований порог 0,9.');
+  ck(imgBox,IM);
+
+  var bioBox=$('bio');
+  seg(bioBox,'trop','Тропонин I или T (в т. ч. высокочувствительный)',[['n','Норма'],['p','Повышен'],['na','Не определяли']],'Маркер повреждения миокарда.');
+
+  var prog=$('prog');
+  NAMES.forEach(function(n,i){
+    var b=document.createElement('button');b.type='button';b.id=P+'pg'+i;b.setAttribute('role','listitem');
+    b.innerHTML='<span class="k">'+(i+1)+'</span><span>'+n+'</span>';
+    b.onclick=function(){go(i)};
+    prog.appendChild(b);
+  });
+
+  /* logic */
+  function shocked(){return S.hd==='sh'}
+  function pesi(){
+    var pts=Math.round(S.age)+(S.male?10:0);
+    PI.forEach(function(p){if(S[p.k])pts+=p.p});
+    var c,m;
+    if(pts<=65){c='I';m='очень низкий риск, 30-дн. смертность 0–1,6%'}
+    else if(pts<=85){c='II';m='низкий риск, 1,7–3,5%'}
+    else if(pts<=105){c='III';m='умеренный риск, 3,2–7,1%'}
+    else if(pts<=125){c='IV';m='высокий риск, 4,0–11,4%'}
+    else {c='V';m='очень высокий риск, 10,0–24,5%'}
+    var sp=(S.age>80?1:0)+S.ca+((S.chf||S.cld)?1:0)+S.hr+S.sbp+S.sat;
+    return {pts:pts,cls:c,m:m,sp:sp,hi:(c!=='I'&&c!=='II')||sp>=1};
+  }
+  function imaging(){
+    if(S.noimg)return {pos:false,na:true,list:[]};
+    var l=[];
+    if(S.rv==='ge')l.push('ПЖ/ЛЖ ≥1,0');
+    if(S.mc)l.push('синдром Мак-Коннелла');
+    if(S.dd)l.push('D-образная деформация ЛЖ');
+    return {pos:l.length>0,na:S.rv==='na'&&!S.mc&&!S.dd,list:l};
+  }
+  function bio(){
+    var l=[];
+    if(S.trop==='p')l.push('тропонин повышен');
+    return {pos:l.length>0,na:S.trop==='na',list:l};
+  }
+  function risk(){
+    if(shocked())return 'high';
+    var p=pesi(),im=imaging(),b=bio();
+    if(p.hi)return (im.pos&&b.pos)?'ih':'il';
+    return (im.pos||b.pos)?'il':'low';
+  }
+  var RC={
+    high:{n:'Высокий',c:'#d03b3b'},
+    ih:{n:'Проме\u00ADжуточно-<br>высокий',c:'#ec835a'},
+    il:{n:'Проме\u00ADжуточно-<br>низкий',c:'#e0a000'},
+    low:{n:'Низкий',c:'#0ca30c'}
+  };
+  var SLOPE=[0,22,44,66,86];
+  $('rs').innerHTML=['high','ih','il','low'].map(function(k,i){
+    return '<div class="c" role="listitem" id="'+P+'r_'+k+'" style="--rc:'+RC[k].c+';--a:'+SLOPE[i]+'%;--b:'+SLOPE[i+1]+'%"><div class="bar"></div><div class="lb">'+RC[k].n+'</div></div>';
+  }).join('');
+
+  /* doses */
+  function D(){
+    var w=S.w;
+    var r=function(x,s){return Math.round(x/s)*s};
+    var fd=w<50?5:(w<=100?7.5:10);
+    return {
+      w:nf(+w.toFixed(1)),
+      ufhB:r(80*w,100),ufhI:r(18*w,10),
+      alt:Math.round(Math.min(0.6*w,50)),altCap:0.6*w>50,altRate:Math.round(Math.min(0.6*w,50))*4,w70:w>=65,max15:Math.round(1.5*w),
+      enox:Math.round(w),enox15:Math.round(1.5*w),
+      nad:r(86*w,50),nadMl:fm(86*w/9500,2),
+      dal:r(100*w,50),
+      fd:nf(fd)
+    };
+  }
+  function li(a){return '<ul>'+a.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul>'}
+  function box(h,body){return '<div class="rx"><h3'+(body?'':' style="margin:0"')+'>'+h+'</h3>'+body+'</div>'}
+  var CI='<details><summary>Противопоказания к тромболизису</summary>'+
+    '<p><b>Абсолютные:</b> геморрагический инсульт или инсульт неясного генеза в анамнезе; ишемический инсульт за последние 6 мес; новообразование ЦНС; большая травма, операция или ЧМТ за последние 3 нед; геморрагический диатез; активное кровотечение.</p>'+
+    '<p><b>Относительные:</b> ТИА за последние 6 мес; приём пероральных антикоагулянтов; беременность или первая неделя после родов; пункция некомпрессируемых сосудов; травматичная реанимация; рефрактерная АГ (САД &gt;180 мм рт. ст.); тяжёлое заболевание печени; инфекционный эндокардит; активная язвенная болезнь.</p></details>';
+  function lmwhList(d){
+    return [
+      'Эноксапарин <b>1 мг/кг п/к каждые 12 ч = '+d.enox+' мг</b> или 1,5 мг/кг 1 раз в сутки = '+d.enox15+' мг',
+      'Надропарин <b>86 МЕ анти-Ха/кг п/к каждые 12 ч = '+d.nad+' МЕ</b> (≈'+d.nadMl+' мл раствора 9500 МЕ/мл)',
+      'Далтепарин <b>100 МЕ/кг п/к каждые 12 ч = '+d.dal+' МЕ</b>',
+      'Фондапаринукс <b>'+d.fd+' мг п/к 1 раз в сутки</b> (5 мг при &lt;50 кг, 7,5 мг при 50–100 кг, 10 мг при &gt;100 кг)'
+    ];
+  }
+  function ufh(d){return 'НФГ в/в: болюс <b>80 ЕД/кг = '+d.ufhB+' ЕД</b>, затем <b>18 ЕД/кг/ч = '+d.ufhI+' ЕД/ч</b>; АЧТВ через 6 ч, цель — в 1,5–2,5 раза выше контроля'}
+  var DOAC='ПОАК: апиксабан <b>10 мг 2 раза в сутки 7 дней, затем 5 мг 2 раза</b>; ривароксабан <b>15 мг 2 раза в сутки 21 день, затем 20 мг 1 раз</b>. Дабигатран 150 мг 2 раза — после ≥5 дней парентеральной антикоагуляции. ПОАК не применяют при тяжёлой почечной недостаточности, беременности, антифосфолипидном синдроме';
+  function recs(k){
+    var d=D();
+    if(k==='high')return box('Показан системный тромболизис',
+        '<div class="dz">Алтеплаза (Актилизе), раствор 1 мг/мл: 50 мг сухого вещества на 50 мл растворителя</div>'+
+        '<h4>Схема 1. Стандартная, 100 мг за 2 ч</h4><ol>'+
+          '<li>Болюс <b>10 мг</b> в/в за 1–2 мин</li>'+
+          '<li>Инфузия <b>90 мг</b> в/в за 2 ч: <b>45 мг/ч = 45 мл/ч</b></li>'+
+          (d.w70?'':'<li>При весе &lt;65 кг суммарная доза не более <b>1,5 мг/кг = '+d.max15+' мг</b></li>')+
+        '</ol>'+
+        '<h4>Схема 2. Ускоренная, 0,6 мг/кг за 15 мин</h4><ol>'+
+          '<li>Инфузия <b>'+d.alt+' мг</b> в/в за 15 мин (максимум 50 мг'+(d.altCap?', достигнут':'')+'): <b>'+d.altRate+' мл/ч</b></li>'+
+        '</ol>'+
+        '<p class="dz" style="margin:8px 0 0">Наибольший эффект — в первые 48 ч от начала симптомов; тромболизис возможен у пациентов с симптомами до 6–14 дней</p>'+
+        '<p style="margin:10px 0 0"><b>Введение Актилизе сопровождается микроструйным введением гепарина</b></p>'+CI);
+    if(k==='ih')return box('Показан селективный тромболизис',
+        '<div class="dz">Алтеплаза (Актилизе)</div>'+
+        '<h4>Катетер-направленный тромболизис с фрагментацией тромбов</h4><ol>'+
+          '<li>Фрагментация тромбов</li>'+
+          '<li>Болюс: одностороннее поражение — <b>1 мг в поражённую ветвь</b>; двустороннее — <b>2 мг в ствол ЛА</b></li>'+
+          '<li>Микроструйное введение в течение <b>9 ч</b>: одностороннее — <b>1 мг/ч в ветвь</b>; двустороннее — <b>2 мг/ч в ствол</b></li>'+
+          '<li>Суммарная доза: <b>10 мг</b> при одностороннем, <b>20 мг</b> при двустороннем поражении</li>'+
+        '</ol>'+
+        '<h4>Ультразвук-ассистированный тромболизис (EKOS)</h4><ol>'+
+          '<li>Болюс <b>1 мг в каждую ветвь</b> интраоперационно</li>'+
+          '<li>Болюс <b>1 мг в каждую ветвь</b> в ОАР</li>'+
+          '<li>Инфузия: <b>7 мг Актилизе + физ. раствор до 35 мл</b> на 7 ч в каждую ветвь</li>'+
+          '<li>Охлаждение: физ. раствор <b>40 мл/ч в каждую ветвь</b></li>'+
+        '</ol>'+
+        '<p style="margin:10px 0 0"><b>Введение Актилизе сопровождается микроструйным введением гепарина</b> (катетер-направленный тромболизис и EKOS)</p>'+
+        '<p class="alert">Контролировать протокол РХМДиЛ!</p>'+CI);
+    return box('Тромболизис не показан','');
+  }
+
+  function renderResult(){
+    var k=risk(),rc=RC[k],p=pesi(),im=imaging(),b=bio(),sh=shocked();
+    $('hero').style.setProperty('--dc',rc.c);
+    var why={
+      high:'Есть признаки шока. Подсчёт PESI и тропонин для этой категории не нужны.',
+      ih:'PESI или sPESI повышены, есть признаки дисфункции ПЖ и повышен тропонин.',
+      il:p.hi?'PESI или sPESI повышены, но положителен не более чем один из критериев: дисфункция ПЖ или тропонин.':'PESI I–II и sPESI 0, но есть признак дисфункции ПЖ или повышен тропонин.',
+      low:'PESI I–II и sPESI 0, признаков дисфункции ПЖ и повышения тропонина нет (или они не оценивались).'
+    }[k];
+    $('why').textContent=why;
+    ['high','ih','il','low'].forEach(function(x){
+      var el=$('r_'+x);if(x===k)el.setAttribute('aria-current','true');else el.removeAttribute('aria-current');
+    });
+    function yn(v){return v?'<b style="color:var(--bad)">да</b>':'<b>нет</b>'}
+    $('eq').innerHTML=
+      '<div class="row"><span class="n">1</span><span>Признаки шока: '+(sh?'<b style="color:var(--bad)">да</b>':'<b>нет</b>')+'</span></div>'+
+      (sh?'':
+      '<div class="row"><span class="n">2</span><span>PESI: <b>'+p.pts+' баллов, класс '+p.cls+'</b>; sPESI <b>'+p.sp+'</b> → повышенный риск по шкале: '+yn(p.hi)+(sh?' (для высокого риска не требуется)':'')+'</span></div>'+
+      '<div class="row"><span class="n">3</span><span>Дисфункция ПЖ: '+(im.na?'<b>не оценена</b>':(im.pos?'<b style="color:var(--bad)">да</b> ('+im.list.join(', ')+')':'<b>нет</b>'))+'</span></div>'+
+      '<div class="row"><span class="n">4</span><span>Тропонин: '+(b.na?'<b>не определяли</b>':(b.pos?'<b style="color:var(--bad)">повышен</b>':'<b>в норме</b>'))+'</span></div>');
+    $('rxh').textContent='Показания к тромболизису (КР Минздрава РФ «Легочная эмболия», 2024)'+(k==='high'?'. Доза для веса '+D().w+' кг':'');
+    $('wbox').hidden=(k!=='high');
+    if(document.activeElement!==$('w2n')){$('w2n').value=S.w}
+    if(document.activeElement!==$('w2')){$('w2').value=Math.min(Math.max(S.w,30),200)}
+    $('rx').innerHTML=recs(k);
+  }
+
+  function update(){
+    var p=pesi(),sh=shocked();
+    $('pv').textContent=p.pts;
+    $('pc').textContent=p.cls;$('pm').textContent=p.m;
+    var hiC=p.cls!=='I'&&p.cls!=='II';
+    $('ps').style.color=hiC?'var(--warn)':'var(--ok)';
+    $('ps').textContent=hiC?'Класс III–V: риск повышен':'Класс I–II';
+    $('sv').textContent=p.sp;
+    $('sm').textContent=p.sp>=1?'30-дн. смертность ≈10,9%':'30-дн. смертность ≈1,0%';
+    $('ss').style.color=p.sp>=1?'var(--warn)':'var(--ok)';
+    $('ss').textContent=p.sp>=1?'sPESI ≥1: риск повышен':'sPESI 0';
+    $('i0').innerHTML=sh?'Выбраны признаки шока: это <b>высокий риск</b>.':(S.hd==='st'?'Гемодинамика стабильна: далее оценим PESI, ПЖ и тропонин.':'Выберите один вариант.');
+    var no=!!S.noimg;
+    ['o_rv','l_mc','l_dd'].forEach(function(id){$(id).classList.toggle('off',no)});
+    var im=imaging();
+    $('i2').innerHTML=im.na?'Дисфункция ПЖ не оценена.':(im.pos?'Признаки дисфункции ПЖ: <b>есть</b> ('+im.list.join(', ')+').':'Признаков дисфункции ПЖ <b>нет</b>.');
+    var b=bio();
+    $('i3').innerHTML=b.na?'Тропонин не определяли.':(b.pos?'Тропонин <b>повышен</b>.':'Тропонин <b>в норме</b>.');
+    for(var i=0;i<5;i++){
+      var pg=$('pg'+i);
+      pg.classList.toggle('skip',sh&&i>=1&&i<=3);
+      pg.classList.toggle('done',i<step);
+      if(i===step)pg.setAttribute('aria-current','step');else pg.removeAttribute('aria-current');
+    }
+    if(step===4)renderResult();
+  }
+  function go(n){
+    step=n;
+    for(var i=0;i<5;i++)$('s'+i).hidden=(i!==n);
+    $('back').hidden=(n===0);
+    $('next').hidden=(n===0);
+    $('next').textContent=n===3?'Показать итог →':(n===4?'Начать заново':'Далее →');
+    if(n===0&&shocked())$('next').textContent='Показать итог →';
+    update();
+    var top=$('prog').getBoundingClientRect().top;
+    if(top<0)$('prog').scrollIntoView({block:'start'});
+  }
+  $('next').onclick=function(){
+    if(step===4){reset();return}
+    if(step===0&&shocked())go(4);else go(step+1);
+  };
+  $('back').onclick=function(){
+    if(step===4&&shocked())go(0);else go(step-1);
+  };
+  function reset(){
+    Object.keys(S).forEach(function(k){
+      if(typeof S[k]==='number'&&k!=='age'&&k!=='w')S[k]=0;
+    });
+    S.male=1;S.rv='na';S.trop='na';S.hd='na';
+    $('shk').querySelectorAll('.hdb').forEach(function(x){x.setAttribute('aria-pressed','false')});
+    document.querySelectorAll('#pe input[type=checkbox]').forEach(function(c){c.checked=false});
+    document.querySelectorAll('#pe .opt').forEach(function(o){
+      o.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.v==='na'))});
+    });
+    $('sM').setAttribute('aria-pressed','true');$('sF').setAttribute('aria-pressed','false');
+    go(0);
+  }
+  go(0);
+})();
+
+/* ---------- SOFA ---------- */
+(function(){
+  var P='s_';function $(i){return byId(P+i)}
+  var S1=[
+    {id:'pao',n:'PaO₂',min:30,max:500,st:1,v:95,u:' мм рт.ст.'},
+    {id:'fio',n:'FiO₂',min:21,max:100,st:1,v:21,u:' %'}
+  ];
+  var S2=[
+    {id:'plt',n:'Тромбоциты',min:5,max:500,st:1,v:250,u:' ×10⁹/л'},
+    {id:'bil',n:'Билирубин',min:2,max:400,st:1,v:12,u:' мкмоль/л'}
+  ];
+  var S3=[
+    {id:'ge',n:'Глаза (E)',min:1,max:4,st:1,v:4,u:''},
+    {id:'gv',n:'Речь (V)',min:1,max:5,st:1,v:5,u:''},
+    {id:'gm',n:'Движения (M)',min:1,max:6,st:1,v:6,u:''}
+  ];
+  // шкала комы Глазго для взрослых
+  var GE=['','нет открывания глаз','открывает на боль','открывает на голос','открывает спонтанно'];
+  var GV=['','нет речи','невнятные звуки, стоны','отдельные слова','спутанная речь, дезориентирован','ориентирован, отвечает чётко'];
+  var GM=['','нет ответа','патологическое разгибание (децеребрация)','патологическое сгибание (декортикация)','отдёргивает конечность на боль','локализует боль','выполняет команды'];
+  var S4=[
+    {id:'map',n:'Ср. АД',min:30,max:120,st:1,v:85,u:' мм рт.ст.'},
+    {id:'dop',n:'Допамин',min:0,max:25,st:0.5,v:0,u:''},
+    {id:'dob',n:'Добутамин',min:0,max:20,st:0.5,v:0,u:''},
+    {id:'nor',n:'Норадреналин',min:0,max:2,st:0.01,v:0,u:''},
+    {id:'epi',n:'Адреналин',min:0,max:2,st:0.01,v:0,u:''}
+  ];
+  var S5=[
+    {id:'cr',n:'Креатинин',min:30,max:800,st:1,v:90,u:' мкмоль/л'},
+    {id:'diu',n:'Диурез',min:0,max:3000,st:50,v:1500,u:' мл/сут'}
+  ];
+  var sh=[addSliders(P,'s_g1',S1),addSliders(P,'s_g2',S2),addSliders(P,'s_g3',S3),addSliders(P,'s_g4',S4),addSliders(P,'s_g5',S5)];
+  (function(){
+    var l=document.createElement('label');l.className='ck';
+    l.innerHTML='<input type="checkbox" id="s_sup"><span class="tx">Респираторная поддержка (ИВЛ)<span class="hint">Баллы 3 и 4 по дыханию ставятся только при респираторной поддержке</span></span>';
+    byId('s_ck').appendChild(l);
+  })();
+  var COL=['#0ca30c','#b5cc3a','#fab219','#ec835a','#d03b3b'];
+  var ORG=[
+    {k:'resp',n:'Дыхание'},{k:'coag',n:'Свёртывание'},{k:'liv',n:'Печень'},
+    {k:'cv',n:'Кровообращение'},{k:'cns',n:'Нервная система'},{k:'ren',n:'Почки'}
+  ];
+  ORG.forEach(function(o){
+    var c=document.createElement('div');c.className='card';
+    c.innerHTML='<div class="nm">'+o.n+'</div><div class="vl" id="'+P+o.k+'P">0</div><div class="u">из 4 баллов</div>'+
+      '<div class="sfm" id="'+P+o.k+'M"><i></i><i></i><i></i><i></i></div><div class="rg" id="'+P+o.k+'T"></div>';
+    $('cards').appendChild(c);
+  });
+  var SEG=[{f:2,c:'#0ca30c'},{f:2,c:'#5fbf3a'},{f:2,c:'#b5cc3a'},{f:2,c:'#fab219'},{f:2,c:'#f0a53a'},{f:2,c:'#ec835a'},{f:3,c:'#e34948'},{f:9,c:'#d03b3b'}];
+  var trk=$('trk');
+  SEG.forEach(function(s){var d=document.createElement('div');d.className='seg2';d.style.flex=s.f;d.style.background=s.c;trk.insertBefore(d,$('mk'))});
+  // смертность в ОРИТ по Ferreira (2001): при первой оценке / при максимальном SOFA
+  var MORT=[
+    {to:1,a:'0',b:'0'},{to:3,a:'6,4',b:'1,5'},{to:5,a:'20,2',b:'6,7'},{to:7,a:'21,5',b:'18,2'},
+    {to:9,a:'33,3',b:'26,3'},{to:11,a:'50,0',b:'45,8'},{to:14,a:'95,2',b:'80,0'},{to:24,a:'95,2',b:'89,7'}
+  ];
+  function v(i){return +$(i).value}
+  function sResp(pf,sup){if(pf>=400)return 0;if(pf>=300)return 1;if(pf>=200)return 2;if(pf>=100)return sup?3:2;return sup?4:2}
+  function sPlt(x){return x>=150?0:x>=100?1:x>=50?2:x>=20?3:4}
+  function sBil(x){return x<20?0:x<33?1:x<102?2:x<=204?3:4}
+  function sGcs(g){return g>=15?0:g>=13?1:g>=10?2:g>=6?3:4}
+  function sCv(map,dop,dob,nor,epi){
+    var p=map<70?1:0;
+    if((dop>0&&dop<=5)||dob>0)p=Math.max(p,2);
+    if(dop>5||(epi>0&&epi<=0.1)||(nor>0&&nor<=0.1))p=Math.max(p,3);
+    if(dop>15||epi>0.1||nor>0.1)p=Math.max(p,4);
+    return p;
+  }
+  function sRen(cr,diu){
+    var a=cr<110?0:cr<171?1:cr<300?2:cr<=440?3:4;
+    var b=diu<200?4:diu<500?3:0;
+    return Math.max(a,b);
+  }
+  function calc(){
+    sh.forEach(function(f){f()});
+    var sup=$('sup').checked;
+    var pao=v('pao'),fio=v('fio'),ge=v('ge'),gv=v('gv'),gm=v('gm'),plt=v('plt'),bil=v('bil'),map=v('map'),dop=v('dop'),dob=v('dob'),nor=v('nor'),epi=v('epi'),cr=v('cr'),diu=v('diu');
+    var pf=Math.floor(pao*100/fio),gcs=ge+gv+gm;
+    var pts={resp:sResp(pf,sup),coag:sPlt(plt),liv:sBil(bil),cv:sCv(map,dop,dob,nor,epi),cns:sGcs(gcs),ren:sRen(cr,diu)};
+    var drugs=[];
+    if(dop>0)drugs.push('допамин '+nf(dop));
+    if(dob>0)drugs.push('добутамин '+nf(dob));
+    if(nor>0)drugs.push('норадреналин '+nf(nor));
+    if(epi>0)drugs.push('адреналин '+nf(epi));
+    var txt={
+      resp:'PaO₂ '+pao+' / FiO₂ '+fio+'% = '+pf+(sup?', на поддержке':', без поддержки'),
+      coag:'тромбоциты '+plt+' ×10⁹/л',
+      liv:'билирубин '+bil+' мкмоль/л',
+      cv:'ср. АД '+map+(drugs.length?', '+drugs.join(', '):', без катехоламинов'),
+      cns:'ШКГ '+gcs+' (E'+ge+' V'+gv+' M'+gm+')',
+      ren:'креатинин '+cr+(diu<500?', диурез '+diu+' мл/сут':'')
+    };
+    $('pfn').innerHTML='PaO₂/FiO₂ = <b>'+pf+' мм рт.ст.</b>';
+    $('gn').innerHTML='<b>E'+ge+'</b>: '+GE[ge]+'<br><b>V'+gv+'</b>: '+GV[gv]+'<br><b>M'+gm+'</b>: '+GM[gm]+'<br>Сумма <b>'+gcs+'</b> из 15';
+    var tot=0,parts=[];
+    ORG.forEach(function(o){
+      var p=pts[o.k];tot+=p;parts.push(p);
+      $(o.k+'P').textContent=p;$(o.k+'P').style.color=p>0?COL[p]:'';
+      var bl=$(o.k+'M').children;
+      for(var i=0;i<bl.length;i++)bl[i].style.background=i<p?COL[p]:'';
+      $(o.k+'T').textContent=txt[o.k];
+    });
+    $('tot').textContent=tot;
+    var col=tot<2?'var(--ok)':tot<6?'var(--warn)':'var(--bad)';
+    $('hero').style.setProperty('--dc',col);
+    $('st').style.color=col;
+    $('st').textContent=tot<2?'Выраженной органной дисфункции нет':tot<6?'Органная дисфункция (SOFA ≥2)':tot<12?'Выраженная органная дисфункция':'Тяжёлая полиорганная недостаточность';
+    $('mk').style.left=Math.min(tot/24,1)*100+'%';
+    var m=MORT.filter(function(x){return tot<=x.to})[0];
+    $('mort').innerHTML='Смертность в ОРИТ (Ferreira, 2001): при первой оценке <b>'+m.a+'%</b>, при максимальном SOFA <b>'+m.b+'%</b>';
+    var rows='';
+    ORG.forEach(function(o,i){rows+='<div class="row"><span class="n">'+(i+1)+'</span><span>'+o.n+': '+txt[o.k]+' → <b>'+pts[o.k]+'</b></span></div>'});
+    rows+='<div class="row"><span class="n">∑</span><span>SOFA = '+parts.join(' + ')+' = <b>'+tot+'</b></span></div>';
+    $('eq').innerHTML=rows;
+  }
+  listen(P,S1,calc);listen(P,S2,calc);listen(P,S3,calc);listen(P,S4,calc);listen(P,S5,calc);
+  $('sup').onchange=calc;
+  calc();
+})();
+
 /* ---------- router ---------- */
 (function(){
   var views=document.querySelectorAll('[data-view]');
@@ -642,5 +1221,5 @@ function listen(P,list,fn){list.forEach(function(s){byId(P+s.id).oninput=fn})}
   }catch(e){}
 })();
 </script>
-</body>
-</html>
+
+</body></html>
