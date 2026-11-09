@@ -423,7 +423,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <div class="sub">Баллы по системам</div>
   <div class="cards" id="s_cards"></div>
   <div class="eq" id="s_eq"></div>
-  <p class="note">Учебный расчёт, не заменяет клиническое решение. Критерии: Vincent et al., 1996 (SOFA), Sepsis-3 (2016). Для баллов используют худшее значение за сутки. Баллы 3 и 4 по дыханию ставятся только при респираторной поддержке. Шкала комы Глазго дана для взрослых; у детей используют адаптированные варианты. У седированных и интубированных пациентов обычно берут оценку до седации. Дозы катехоламинов указаны в мкг/кг/мин и учитываются при введении не менее часа. Диурез влияет на оценку почек, только если он ниже 500 или 200 мл в сутки. Смертность взята из когорты ОРИТ (Ferreira et al., 2001: при первой оценке и при максимальном SOFA) и в современной практике может отличаться.</p>
+  <p class="note">Учебный расчёт, не заменяет клиническое решение. Критерии: Vincent et al., 1996 (SOFA), Sepsis-3 (2016). Для баллов используют худшее значение за сутки. Баллы 3 и 4 по дыханию ставятся только при респираторной поддержке. Шкала комы Глазго дана для взрослых; у детей используют адаптированные варианты. У седированных и интубированных пациентов обычно берут оценку до седации. Дозы катехоламинов указаны в мкг/кг/мин и учитываются при введении не менее часа. Для почек берётся худший из двух показателей: креатинин или диурез (меньше 200 мл в сутки даёт 4 балла, 200–500 мл даёт 3 балла). Смертность взята из когорты ОРИТ (Ferreira et al., 2001: при первой оценке и при максимальном SOFA) и в современной практике может отличаться.</p>
 </section>
 
 </main>
@@ -1091,10 +1091,19 @@ function listen(P,list,fn){list.forEach(function(s){byId(P+s.id).oninput=fn})}
     {id:'epi',n:'Адреналин',min:0,max:2,st:0.01,v:0,u:''}
   ];
   var S5=[
-    {id:'cr',n:'Креатинин',min:30,max:800,st:1,v:90,u:' мкмоль/л'},
-    {id:'diu',n:'Диурез',min:0,max:3000,st:50,v:1500,u:' мл/сут'}
+    {id:'cr',n:'Креатинин',min:30,max:800,st:1,v:90,u:' мкмоль/л'}
   ];
   var sh=[addSliders(P,'s_g1',S1),addSliders(P,'s_g2',S2),addSliders(P,'s_g3',S3),addSliders(P,'s_g4',S4),addSliders(P,'s_g5',S5)];
+  // диурез по категориям: 0 = <200, 1 = 200–500, 2 = >500 мл/сут
+  var dc=2;
+  (function(){
+    var r=document.createElement('div');r.className='sl';
+    r.innerHTML='<label>Диурез</label><div class="seg" role="group" aria-label="Суточный диурез, мл"><button type="button" id="s_d0" aria-pressed="false">&lt;200</button><button type="button" id="s_d1" aria-pressed="false">200–500</button><button type="button" id="s_d2" aria-pressed="true">&gt;500</button></div>';
+    byId('s_g5').appendChild(r);
+    var n=document.createElement('div');n.className='sfn';n.textContent='Суточный диурез, мл';
+    byId('s_g5').appendChild(n);
+  })();
+  function setDc(k){dc=k;for(var i=0;i<3;i++)byId('s_d'+i).setAttribute('aria-pressed',i===k?'true':'false');calc()}
   (function(){
     var l=document.createElement('label');l.className='ck';
     l.innerHTML='<input type="checkbox" id="s_sup"><span class="tx">Респираторная поддержка (ИВЛ)<span class="hint">Баллы 3 и 4 по дыханию ставятся только при респираторной поддержке</span></span>';
@@ -1131,17 +1140,17 @@ function listen(P,list,fn){list.forEach(function(s){byId(P+s.id).oninput=fn})}
     if(dop>15||epi>0.1||nor>0.1)p=Math.max(p,4);
     return p;
   }
-  function sRen(cr,diu){
+  function sRen(cr,dc){
     var a=cr<110?0:cr<171?1:cr<300?2:cr<=440?3:4;
-    var b=diu<200?4:diu<500?3:0;
+    var b=dc===0?4:dc===1?3:0;
     return Math.max(a,b);
   }
   function calc(){
     sh.forEach(function(f){f()});
     var sup=$('sup').checked;
-    var pao=v('pao'),fio=v('fio'),ge=v('ge'),gv=v('gv'),gm=v('gm'),plt=v('plt'),bil=v('bil'),map=v('map'),dop=v('dop'),dob=v('dob'),nor=v('nor'),epi=v('epi'),cr=v('cr'),diu=v('diu');
+    var pao=v('pao'),fio=v('fio'),ge=v('ge'),gv=v('gv'),gm=v('gm'),plt=v('plt'),bil=v('bil'),map=v('map'),dop=v('dop'),dob=v('dob'),nor=v('nor'),epi=v('epi'),cr=v('cr');
     var pf=Math.floor(pao*100/fio),gcs=ge+gv+gm;
-    var pts={resp:sResp(pf,sup),coag:sPlt(plt),liv:sBil(bil),cv:sCv(map,dop,dob,nor,epi),cns:sGcs(gcs),ren:sRen(cr,diu)};
+    var pts={resp:sResp(pf,sup),coag:sPlt(plt),liv:sBil(bil),cv:sCv(map,dop,dob,nor,epi),cns:sGcs(gcs),ren:sRen(cr,dc)};
     var drugs=[];
     if(dop>0)drugs.push('допамин '+nf(dop));
     if(dob>0)drugs.push('добутамин '+nf(dob));
@@ -1153,7 +1162,7 @@ function listen(P,list,fn){list.forEach(function(s){byId(P+s.id).oninput=fn})}
       liv:'билирубин '+bil+' мкмоль/л',
       cv:'ср. АД '+map+(drugs.length?', '+drugs.join(', '):', без катехоламинов'),
       cns:'ШКГ '+gcs+' (E'+ge+' V'+gv+' M'+gm+')',
-      ren:'креатинин '+cr+(diu<500?', диурез '+diu+' мл/сут':'')
+      ren:'креатинин '+cr+(dc<2?', диурез '+(dc===0?'<200':'200–500')+' мл/сут':'')
     };
     $('pfn').innerHTML='PaO₂/FiO₂ = <b>'+pf+' мм рт.ст.</b>';
     $('gn').innerHTML='<b>E'+ge+'</b>: '+GE[ge]+'<br><b>V'+gv+'</b>: '+GV[gv]+'<br><b>M'+gm+'</b>: '+GM[gm]+'<br>Сумма <b>'+gcs+'</b> из 15';
@@ -1180,6 +1189,7 @@ function listen(P,list,fn){list.forEach(function(s){byId(P+s.id).oninput=fn})}
   }
   listen(P,S1,calc);listen(P,S2,calc);listen(P,S3,calc);listen(P,S4,calc);listen(P,S5,calc);
   $('sup').onchange=calc;
+  for(var q=0;q<3;q++)(function(k){byId('s_d'+k).onclick=function(){setDc(k)}})(q);
   calc();
 })();
 
@@ -1222,9 +1232,8 @@ function listen(P,list,fn){list.forEach(function(s){byId(P+s.id).oninput=fn})}
 })();
 </script>
 
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
+/* Счётчик пользователей: отправляет данные Telegram на воркер Cloudflare. Не удалять при обновлении файла. */
 (function () {
   const tg = window.Telegram && window.Telegram.WebApp;
 
